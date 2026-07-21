@@ -1,0 +1,808 @@
+{
+    "binFileName": "ReduceAll_bool_int64_high_performance",
+    "binFileSuffix": ".o",
+    "blockDim": -1,
+    "coreType": "MIX",
+    "intercoreSync": 1,
+    "kernelName": "ReduceAll_bool_int64_high_performance",
+    "magic": "RT_DEV_BINARY_MAGIC_ELF",
+    "memoryStamping": [],
+    "opParaSize": 536,
+    "parameters": [
+        null,
+        null,
+        null,
+        null
+    ],
+    "sha256": "791c9da5604fecab6ffe81c88e3e2c7cd3d68e4c014ec4de37a60e2d279ae8e4",
+    "workspace": {
+        "num": 1,
+        "size": [
+            -1
+        ],
+        "type": [
+            0
+        ]
+    },
+    "kernelList": [
+        {
+            "tilingKey": 1,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_1"
+        },
+        {
+            "tilingKey": 5321,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_5321"
+        },
+        {
+            "tilingKey": 5143,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_5143"
+        },
+        {
+            "tilingKey": 136215,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_136215"
+        },
+        {
+            "tilingKey": 6167,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_6167"
+        },
+        {
+            "tilingKey": 5161,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_5161"
+        },
+        {
+            "tilingKey": 136233,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_136233"
+        },
+        {
+            "tilingKey": 10281,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_10281"
+        },
+        {
+            "tilingKey": 141353,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_141353"
+        },
+        {
+            "tilingKey": 6185,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_6185"
+        },
+        {
+            "tilingKey": 11817,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_11817"
+        },
+        {
+            "tilingKey": 5183,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_5183"
+        },
+        {
+            "tilingKey": 136255,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_136255"
+        },
+        {
+            "tilingKey": 267327,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_267327"
+        },
+        {
+            "tilingKey": 10303,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_10303"
+        },
+        {
+            "tilingKey": 141375,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_141375"
+        },
+        {
+            "tilingKey": 272447,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_272447"
+        },
+        {
+            "tilingKey": 6207,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_6207"
+        },
+        {
+            "tilingKey": 6719,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_6719"
+        },
+        {
+            "tilingKey": 11839,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_11839"
+        },
+        {
+            "tilingKey": 12351,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_12351"
+        },
+        {
+            "tilingKey": 5263,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_5263"
+        },
+        {
+            "tilingKey": 136335,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_136335"
+        },
+        {
+            "tilingKey": 267407,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_267407"
+        },
+        {
+            "tilingKey": 398479,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_398479"
+        },
+        {
+            "tilingKey": 529551,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_529551"
+        },
+        {
+            "tilingKey": 10383,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_10383"
+        },
+        {
+            "tilingKey": 141455,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_141455"
+        },
+        {
+            "tilingKey": 272527,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_272527"
+        },
+        {
+            "tilingKey": 403599,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_403599"
+        },
+        {
+            "tilingKey": 534671,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_534671"
+        },
+        {
+            "tilingKey": 15503,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_15503"
+        },
+        {
+            "tilingKey": 146575,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_146575"
+        },
+        {
+            "tilingKey": 277647,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_277647"
+        },
+        {
+            "tilingKey": 408719,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_408719"
+        },
+        {
+            "tilingKey": 539791,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_539791"
+        },
+        {
+            "tilingKey": 20623,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_20623"
+        },
+        {
+            "tilingKey": 151695,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_151695"
+        },
+        {
+            "tilingKey": 282767,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_282767"
+        },
+        {
+            "tilingKey": 413839,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_413839"
+        },
+        {
+            "tilingKey": 544911,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_544911"
+        },
+        {
+            "tilingKey": 6287,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_6287"
+        },
+        {
+            "tilingKey": 6799,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_6799"
+        },
+        {
+            "tilingKey": 7311,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_7311"
+        },
+        {
+            "tilingKey": 7823,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_7823"
+        },
+        {
+            "tilingKey": 11919,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_11919"
+        },
+        {
+            "tilingKey": 12431,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_12431"
+        },
+        {
+            "tilingKey": 12943,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_12943"
+        },
+        {
+            "tilingKey": 13455,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_13455"
+        },
+        {
+            "tilingKey": 17551,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_17551"
+        },
+        {
+            "tilingKey": 18063,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_18063"
+        },
+        {
+            "tilingKey": 18575,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_18575"
+        },
+        {
+            "tilingKey": 19087,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_19087"
+        },
+        {
+            "tilingKey": 23183,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_23183"
+        },
+        {
+            "tilingKey": 23695,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_23695"
+        },
+        {
+            "tilingKey": 24207,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_24207"
+        },
+        {
+            "tilingKey": 24719,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_24719"
+        },
+        {
+            "tilingKey": 5281,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_5281"
+        },
+        {
+            "tilingKey": 136353,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_136353"
+        },
+        {
+            "tilingKey": 267425,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_267425"
+        },
+        {
+            "tilingKey": 398497,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_398497"
+        },
+        {
+            "tilingKey": 529569,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_529569"
+        },
+        {
+            "tilingKey": 10401,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_10401"
+        },
+        {
+            "tilingKey": 141473,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_141473"
+        },
+        {
+            "tilingKey": 272545,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_272545"
+        },
+        {
+            "tilingKey": 403617,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_403617"
+        },
+        {
+            "tilingKey": 534689,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_534689"
+        },
+        {
+            "tilingKey": 15521,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_15521"
+        },
+        {
+            "tilingKey": 146593,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_146593"
+        },
+        {
+            "tilingKey": 277665,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_277665"
+        },
+        {
+            "tilingKey": 408737,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_408737"
+        },
+        {
+            "tilingKey": 539809,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_539809"
+        },
+        {
+            "tilingKey": 20641,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_20641"
+        },
+        {
+            "tilingKey": 151713,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_151713"
+        },
+        {
+            "tilingKey": 282785,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_282785"
+        },
+        {
+            "tilingKey": 413857,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_413857"
+        },
+        {
+            "tilingKey": 544929,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_544929"
+        },
+        {
+            "tilingKey": 25761,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_25761"
+        },
+        {
+            "tilingKey": 156833,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_156833"
+        },
+        {
+            "tilingKey": 287905,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_287905"
+        },
+        {
+            "tilingKey": 418977,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_418977"
+        },
+        {
+            "tilingKey": 550049,
+            "kernelType": "MIX_AIC",
+            "taskRation": "0:1",
+            "crossCoreSync": 0,
+            "kernelName": "ReduceAll_bool_int64_high_performance_550049"
+        },
+        {
+            "tilingKey": 6305,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_6305"
+        },
+        {
+            "tilingKey": 6817,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_6817"
+        },
+        {
+            "tilingKey": 7329,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_7329"
+        },
+        {
+            "tilingKey": 7841,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_7841"
+        },
+        {
+            "tilingKey": 11937,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_11937"
+        },
+        {
+            "tilingKey": 12449,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_12449"
+        },
+        {
+            "tilingKey": 12961,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_12961"
+        },
+        {
+            "tilingKey": 13473,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_13473"
+        },
+        {
+            "tilingKey": 17569,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_17569"
+        },
+        {
+            "tilingKey": 18081,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_18081"
+        },
+        {
+            "tilingKey": 18593,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_18593"
+        },
+        {
+            "tilingKey": 19105,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_19105"
+        },
+        {
+            "tilingKey": 23201,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_23201"
+        },
+        {
+            "tilingKey": 23713,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_23713"
+        },
+        {
+            "tilingKey": 24225,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_24225"
+        },
+        {
+            "tilingKey": 24737,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_24737"
+        },
+        {
+            "tilingKey": 28833,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_28833"
+        },
+        {
+            "tilingKey": 29345,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_29345"
+        },
+        {
+            "tilingKey": 29857,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_29857"
+        },
+        {
+            "tilingKey": 30369,
+            "kernelType": "MIX_AIC",
+            "crossCoreSync": 1,
+            "taskRation": "0:1",
+            "kernelName": "ReduceAll_bool_int64_high_performance_30369"
+        }
+    ],
+    "taskRation": "tilingKey",
+    "optionalInputMode": "gen_placeholder",
+    "optionalOutputMode": "gen_placeholder",
+    "supportSuperKernel": 1,
+    "compileInfo": {},
+    "supportInfo": {
+        "implMode": "high_performance",
+        "int64Mode": false,
+        "simplifiedKeyMode": 0,
+        "simplifiedKey": [
+            "ReduceAll/d=0,p=1/12,2/9,2/12,2",
+            "ReduceAll/d=0,p=0/12,2/9,2/12,2",
+            "ReduceAll/d=1,p=1/12,2/9,2/12,2",
+            "ReduceAll/d=1,p=0/12,2/9,2/12,2"
+        ],
+        "optionalInputMode": "gen_placeholder",
+        "optionalOutputMode": "gen_placeholder",
+        "staticKey": "34d92faff181f2ca993ffc697cd0d615a60ad2ee3ed606878cbc4b89233f9d1e,32d5a4d162224beef562ecd14740b08a6cd705bcd2dd427337362629631b28a8",
+        "inputs": [
+            {
+                "name": "x",
+                "index": 0,
+                "dtype": "bool",
+                "format": "ND",
+                "paramType": "required",
+                "shape": [
+                    -2
+                ],
+                "format_match_mode": "FormatAgnostic"
+            },
+            {
+                "name": "axes",
+                "index": 1,
+                "dtype": "int64",
+                "format": "ND",
+                "paramType": "required",
+                "shape": [
+                    -2
+                ],
+                "format_match_mode": "FormatAgnostic"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "y",
+                "index": 0,
+                "dtype": "bool",
+                "format": "ND",
+                "paramType": "required",
+                "shape": [
+                    -2
+                ],
+                "format_match_mode": "FormatAgnostic"
+            }
+        ],
+        "attrs": [
+            {
+                "name": "keep_dims",
+                "dtype": "bool",
+                "value": null
+            }
+        ],
+        "opMode": "dynamic",
+        "deterministic": "ignore"
+    }
+}

@@ -1,0 +1,6 @@
+[submodule "OpenTileAS"]
+	path = OpenTileAS
+	url = https://gitcode.com/OpenTileIR/OpenTileAS
+[submodule "OpenTileConverter"]
+	path = OpenTileConverter
+	url = https://gitcode.com/OpenTileIR/OpenTileConverter

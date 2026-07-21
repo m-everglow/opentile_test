@@ -1,0 +1,107 @@
+{
+    "binFileName": "BroadcastTo_7538f6ca8b4e71ac38750eb26a539cca7_high_performance",
+    "binFileSuffix": ".o",
+    "blockDim": -1,
+    "coreType": "VectorCore",
+    "core_type": "AIV",
+    "intercoreSync": 0,
+    "kernelName": "BroadcastTo_7538f6ca8b4e71ac38750eb26a539cca7_high_performance",
+    "magic": "RT_DEV_BINARY_MAGIC_ELF_AIVEC",
+    "memoryStamping": [],
+    "opParaSize": 536,
+    "parameters": [
+        null,
+        null,
+        null,
+        null
+    ],
+    "sha256": "cbe09723656b69860c5174594d26f9f7491700ead735b413fdfc55d08caf7cb2",
+    "workspace": {
+        "num": 1,
+        "size": [
+            -1
+        ],
+        "type": [
+            0
+        ]
+    },
+    "kernelList": [
+        {
+            "kernelName": "BroadcastTo_7538f6ca8b4e71ac38750eb26a539cca7_high_performance_11000"
+        },
+        {
+            "kernelName": "BroadcastTo_7538f6ca8b4e71ac38750eb26a539cca7_high_performance_11001"
+        },
+        {
+            "kernelName": "BroadcastTo_7538f6ca8b4e71ac38750eb26a539cca7_high_performance_11002"
+        },
+        {
+            "kernelName": "BroadcastTo_7538f6ca8b4e71ac38750eb26a539cca7_high_performance_11003"
+        },
+        {
+            "kernelName": "BroadcastTo_7538f6ca8b4e71ac38750eb26a539cca7_high_performance_11004"
+        },
+        {
+            "kernelName": "BroadcastTo_7538f6ca8b4e71ac38750eb26a539cca7_high_performance_11005"
+        }
+    ],
+    "optionalInputMode": "gen_placeholder",
+    "optionalOutputMode": "gen_placeholder",
+    "supportSuperKernel": 1,
+    "compileInfo": {},
+    "supportInfo": {
+        "implMode": "high_performance",
+        "int64Mode": false,
+        "simplifiedKeyMode": 0,
+        "simplifiedKey": [
+            "BroadcastTo/d=0,p=1/3,2/9,2/3,2",
+            "BroadcastTo/d=0,p=0/3,2/9,2/3,2",
+            "BroadcastTo/d=1,p=1/3,2/9,2/3,2",
+            "BroadcastTo/d=1,p=0/3,2/9,2/3,2"
+        ],
+        "optionalInputMode": "gen_placeholder",
+        "optionalOutputMode": "gen_placeholder",
+        "staticKey": "6047c106246a7bc9f72f058ddbdbb86887d0e1db5652ada7541c9f79ea4228a3,69433f1d5a00a61bd46fc4cf86fa3e823544f6b4bf66bd78a7ebd1f1b7c5fda3",
+        "inputs": [
+            {
+                "name": "x",
+                "index": 0,
+                "dtype": "float32",
+                "format": "ND",
+                "paramType": "required",
+                "shape": [
+                    -2
+                ],
+                "format_match_mode": "FormatAgnostic",
+                "dtype_match_mode": "DtypeByte"
+            },
+            {
+                "name": "shape",
+                "index": 1,
+                "dtype": "int64",
+                "format": "ND",
+                "paramType": "required",
+                "shape": [
+                    -2
+                ],
+                "format_match_mode": "FormatAgnostic"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "y",
+                "index": 0,
+                "dtype": "float32",
+                "format": "ND",
+                "paramType": "required",
+                "shape": [
+                    -2
+                ],
+                "format_match_mode": "FormatAgnostic",
+                "dtype_match_mode": "DtypeByte"
+            }
+        ],
+        "opMode": "dynamic",
+        "deterministic": "ignore"
+    }
+}
