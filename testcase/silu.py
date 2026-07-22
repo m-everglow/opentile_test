@@ -5,9 +5,20 @@ Kernel source:
   mojo_opset/backends/ttx/kernels/npu/silu.py
   SHA256 4c6213265e000ceba31aa458141dd44f5c085ded0252898ea3ee9724bf8bfe41
 
+Input/golden source:
+  mojo_opset-master/tests/accuracy/operators/test_activation.py::test_silu
+  first case: shape=[128, 128], torch.rand, BF16; golden=F.silu
+  SHA256 928bd2912c683b81f061b95130e96ff2d9038ef7cbdcecc706fc53bd5ee809ce
+
 Only the runtime-only autotune/libentry decorators are omitted.  The helper
 and forward-kernel bodies below are kept identical to the production source.
 """
+
+import os
+
+os.environ.setdefault("TRITON_BACKENDS_IN_TREE", "1")
+os.environ.setdefault("TRITON_BACKEND", "opentile")
+os.environ.setdefault("TRITON_ALWAYS_COMPILE", "1")
 
 import torch
 import triton
@@ -93,3 +104,35 @@ def silu_forward(x: torch.Tensor) -> torch.Tensor:
     compiled[(grid_size, 1, 1)](x_2d, y, x_2d.stride(0), n_rows, n_cols)
     return y.reshape(original_shape)
 
+
+def _npu_test_available():
+    try:
+        import torch_npu  # noqa: F401
+
+        return hasattr(torch, "npu") and torch.npu.is_available()
+    except Exception:
+        return False
+
+
+def _test_device():
+    device_id = int(os.environ.get("OPENTILE_TEST_DEVICE", "0"))
+    torch.npu.set_device(device_id)
+    return torch.device("npu", device_id)
+
+
+def test_silu_forward_opentile():
+    import pytest
+
+    if not _npu_test_available():
+        pytest.skip("torch_npu is unavailable or no NPU device is visible")
+
+    torch.manual_seed(0)
+    x = torch.rand((128, 128), device=_test_device(), dtype=torch.bfloat16)
+    actual = silu_forward(x)
+    torch.npu.synchronize()
+    expected = torch.nn.functional.silu(x)
+    torch.npu.synchronize()
+
+    assert actual.shape == expected.shape
+    assert actual.dtype == expected.dtype
+    torch.testing.assert_close(actual.cpu(), expected.cpu(), atol=1e-2, rtol=1e-2)

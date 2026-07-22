@@ -122,7 +122,7 @@ run_test() {
 
 failed_files=()
 failed_count=0
-for file in "testcase/test_gmm_fwd.py" "testcase/test_rmsnorm.py" "testcase/fa.py" "testcase/gelu.py"; do
+for file in "testcase/test_gmm_fwd.py" "testcase/test_rmsnorm.py" "testcase/fa.py" "testcase/gelu.py" "testcase/silu.py" "testcase/swiglu.py" "testcase/paged_decode.py"; do
     if ! run_test "$file"; then
         failed_files+=("$file")
         ((failed_count++))

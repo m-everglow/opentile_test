@@ -5,9 +5,21 @@ Kernel source:
   mojo_opset/backends/ttx/kernels/npu/swiglu.py
   SHA256 dede713ea2302fd2bceb0a152a38b467a6b6f102caa2460cf3f9bcc1125447a4
 
+Input/golden source:
+  mojo_opset-master/tests/accuracy/operators/test_activation.py::test_swiglu
+  first case: two shape=[256, 128] torch.rand BF16 inputs;
+  golden=F.silu(gate_out) * up_out
+  SHA256 928bd2912c683b81f061b95130e96ff2d9038ef7cbdcecc706fc53bd5ee809ce
+
 Only the runtime-only autotune/libentry decorators are omitted.  The helper
 and forward-kernel bodies below are kept identical to the production source.
 """
+
+import os
+
+os.environ.setdefault("TRITON_BACKENDS_IN_TREE", "1")
+os.environ.setdefault("TRITON_BACKEND", "opentile")
+os.environ.setdefault("TRITON_ALWAYS_COMPILE", "1")
 
 import torch
 import triton
@@ -100,3 +112,37 @@ def swiglu_forward(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
     compiled[(grid_size, 1, 1)](a_2d, b_2d, c, a_2d.stride(0), n_rows, n_cols)
     return c.reshape(original_shape)
 
+
+def _npu_test_available():
+    try:
+        import torch_npu  # noqa: F401
+
+        return hasattr(torch, "npu") and torch.npu.is_available()
+    except Exception:
+        return False
+
+
+def _test_device():
+    device_id = int(os.environ.get("OPENTILE_TEST_DEVICE", "0"))
+    torch.npu.set_device(device_id)
+    return torch.device("npu", device_id)
+
+
+def test_swiglu_forward_opentile():
+    import pytest
+
+    if not _npu_test_available():
+        pytest.skip("torch_npu is unavailable or no NPU device is visible")
+
+    torch.manual_seed(0)
+    device = _test_device()
+    gate_out = torch.rand((256, 128), device=device, dtype=torch.bfloat16)
+    up_out = torch.rand((256, 128), device=device, dtype=torch.bfloat16)
+    actual = swiglu_forward(gate_out, up_out)
+    torch.npu.synchronize()
+    expected = torch.nn.functional.silu(gate_out) * up_out
+    torch.npu.synchronize()
+
+    assert actual.shape == expected.shape
+    assert actual.dtype == expected.dtype
+    torch.testing.assert_close(actual.cpu(), expected.cpu(), atol=1e-2, rtol=1e-2)
