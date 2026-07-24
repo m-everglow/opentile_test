@@ -11,7 +11,9 @@ echo "脚本目录: $SCRIPT_DIR"
 
 source /data/set_proxy.bash
 source /data/setenv.bash
-
+rm -rf /tmp/torchinductor_root/*
+rm -rf ~/.triton/dump
+rm -rf ~/.triton/cache
 # ---- 全局锁 ----
 LOCKFILE="/tmp/OpenTileAS_build.lock"
 exec 200>"$LOCKFILE"
@@ -130,7 +132,22 @@ run_test() {
 
 failed_files=()
 failed_count=0
-for file in  "testcase/test_gmm_fwd.py" "testcase/test_rmsnorm.py" "testcase/fa.py" "testcase/gelu.py" "testcase/silu.py" "testcase/swiglu.py" "testcase/paged_decode.py" "testcase/_fused_add_layernorm_fwd_kernel.py" "testcase/_fused_add_rmsnorm_fwd_kernel.py"; do
+test_files=(
+    "testcase/test_gmm_fwd.py"
+    "testcase/test_rmsnorm.py"
+    "testcase/fa.py"
+    "testcase/gelu.py"
+    "testcase/silu.py"
+    "testcase/swiglu.py"
+    "testcase/paged_decode.py"
+    "testcase/_fused_add_layernorm_fwd_kernel.py"
+    "testcase/_fused_add_rmsnorm_fwd_kernel.py"
+    "testcase/test_fused_matmul_bwd_x.py"
+    "testcase/test_silu_forward_backward_diff.py"
+    "testcase/test_fused_ce_forward_backward_diff.py"
+)
+
+for file in "${test_files[@]}"; do
     if ! run_test "$file"; then
         failed_files+=("$file")
         ((failed_count++))
