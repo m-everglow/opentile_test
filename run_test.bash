@@ -49,6 +49,8 @@ fi
 cleanup() {
     echo "正在进行清理..."
     cd "$SCRIPT_DIR/OpenTileAS" 2>/dev/null || return
+    # 清除可能残留的 rebase 状态
+    git rebase --abort 2>/dev/null
     git checkout main 2>/dev/null || true
     git reset --hard origin/main 2>/dev/null || true
     if [ -n "$BRANCH_NAME" ]; then
@@ -86,6 +88,8 @@ if [ "$MODE" = "pr" ]; then
 else
     echo "未指定 PR 编号，使用最新 main 分支"
 fi
+
+echo $(git rev-parse HEAD)
 
 echo "正在清理旧的 build 目录..."
 rm -rf build
@@ -154,12 +158,12 @@ if [ -z "$TEST_NUM" ]; then
     old_files=(
         "testcase/oldtest/test_gmm_fwd.py"
         "testcase/oldtest/test_rmsnorm.py"
-        "testcase/oldtest/fa.py"
         "testcase/oldtest/_fused_add_layernorm_fwd_kernel.py"
         "testcase/oldtest/_fused_add_rmsnorm_fwd_kernel.py"
         "testcase/oldtest/test_fused_matmul_bwd_x.py"
         "testcase/oldtest/test_silu_forward_backward_diff.py"
         "testcase/oldtest/test_fused_ce_forward_backward_diff.py"
+        testcase/oldtest/fa_all.py
     )
 
     for file in "${old_files[@]}"; do

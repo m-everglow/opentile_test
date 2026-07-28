@@ -80,12 +80,14 @@ def _attn_fwd_inner_fp8(acc, l_i, m_i, q, # q: fp8
             curr_mask_ptr = attn_mask_ptr
             mask = tl.load(curr_mask_ptr)
             qk = qk * qk_scale + tl.where(mask, -1.0e4, 0)
-            m_ij = tl.maximum(m_i, tl.max(qk, 1, propagate_nan=True), propagate_nan=tl.PropagateNan.ALL)
+            # TODO(CONVERTER_PROPAGATE_NAN): restore propagate_nan=True after the Converter upgrade.
+            m_ij = tl.maximum(m_i, tl.max(qk, 1), propagate_nan=tl.PropagateNan.ALL)
             qk -= m_ij[:, None]
             attn_mask_ptr = tl.advance(attn_mask_ptr, (0, BLOCK_N))
         else:
             qk = qk * qk_scale
-            m_ij = tl.maximum(m_i, tl.max(qk, 1, propagate_nan=True), propagate_nan=tl.PropagateNan.ALL)
+            # TODO(CONVERTER_PROPAGATE_NAN): restore propagate_nan=True after the Converter upgrade.
+            m_ij = tl.maximum(m_i, tl.max(qk, 1), propagate_nan=tl.PropagateNan.ALL)
             qk = qk - m_ij[:, None]
 
 
