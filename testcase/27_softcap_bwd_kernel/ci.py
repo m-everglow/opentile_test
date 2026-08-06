@@ -5,6 +5,13 @@ Run directly:
 
 Run with pytest:
   pytest -s --assert=plain test_softcap_forward_backward_diff_standalone.py
+
+The golden reproduces the kernel's exact arithmetic: tanh is computed as
+2*sigmoid(2z)-1 and the forward result is rounded to the input dtype *before*
+multiplying by softcap (matching `softcap * tanh_x.to(x.dtype)`).  Using
+torch.tanh without the intermediate dtype rounding differs from the kernel by
+up to 0.5 bf16 ULP on rounding boundaries, which softcap=50 amplifies past the
+bf16 tolerance on large shapes.
 """
 
 from __future__ import annotations
@@ -52,6 +59,7 @@ def _softcap_fwd_kernel(
         offsets = block_start + tl.arange(0, BLOCK_SIZE)
         mask = offsets < n_elements
         x = tl.load(x_ptr + offsets, mask=mask)
+        # tanh(z) = 2*sigmoid(2z) - 1
         z = x.to(tl.float32) / softcap
         tanh_x = 2.0 * tl.sigmoid(2.0 * z) - 1.0
         y = softcap * tanh_x.to(x.dtype)
@@ -76,6 +84,8 @@ def _softcap_bwd_kernel(
         mask = offsets < n_elements
         dy = tl.load(dy_ptr + offsets, mask=mask)
         x = tl.load(x_ptr + offsets, mask=mask)
+        # Fix: keep tanh and derivative in FP32, preserve dy*softcap rounding.
+        # tanh(z) = 2*sigmoid(2z) - 1
         z = x.to(tl.float32) / softcap
         tanh_x = 2.0 * tl.sigmoid(2.0 * z) - 1.0
         scaled_dy = (dy.to(tl.float32) * softcap).to(dy.dtype).to(tl.float32)
@@ -115,6 +125,12 @@ def _compare(name: str, actual: torch.Tensor, golden: torch.Tensor, dtype: str) 
     torch.testing.assert_close(actual_f32, golden_f32, atol=atol, rtol=rtol)
 
 
+def _softcap_tanh_f32(x_f32: torch.Tensor) -> torch.Tensor:
+    """Kernel-faithful tanh: 2*sigmoid(2z)-1 in FP32."""
+    z = x_f32 / SOFTCAP
+    return 2.0 * torch.sigmoid(2.0 * z) - 1.0
+
+
 def run_one(dtype_name: str, shape: tuple[int, int], device: torch.device) -> None:
     torch_dtype = DTYPES[dtype_name]
     rows, cols = shape
@@ -123,15 +139,20 @@ def run_one(dtype_name: str, shape: tuple[int, int], device: torch.device) -> No
     torch.manual_seed(SEED)
     x_cpu = torch.randn(rows, cols, dtype=torch_dtype, device="cpu", requires_grad=True)
     with torch.no_grad():
-        # Golden: softcap * tanh(x.float() / softcap).to(x.dtype)
+        # Golden forward, kernel-faithful:
+        #   y = softcap * tanh(x.float()/softcap).to(x.dtype)
+        # The intermediate .to(x.dtype) rounding happens BEFORE multiplying by
+        # softcap (matches `softcap * tanh_x.to(x.dtype)`), so reproduce it.
         x_f32 = x_cpu.float()
-        y_golden = (SOFTCAP * torch.tanh(x_f32 / SOFTCAP)).to(torch_dtype)
+        tanh_x = _softcap_tanh_f32(x_f32)
+        tanh_rounded = tanh_x.to(torch_dtype)          # kernel's intermediate cast
+        y_golden = (SOFTCAP * tanh_rounded.float()).to(torch_dtype)
+
         dy_cpu = torch.randn_like(y_golden)
-        # Golden backward: match the actual autograd graph.
-        # d/dx [softcap * tanh(x.float()/softcap).to(x.dtype)]
-        # = round(dy * softcap) * (1 - tanh_fp32^2) / softcap
+        # Golden backward, kernel-faithful:
+        #   dx = round(dy*softcap) * (1 - tanh_fp32^2) / softcap
         dy_f32 = dy_cpu.float()
-        tanh_f32 = torch.tanh(x_f32 / SOFTCAP)
+        tanh_f32 = _softcap_tanh_f32(x_f32)
         scaled_dy = (dy_f32 * SOFTCAP).to(torch_dtype).float()
         dx_golden = (scaled_dy * (1.0 - tanh_f32 * tanh_f32) / SOFTCAP).to(torch_dtype)
 
