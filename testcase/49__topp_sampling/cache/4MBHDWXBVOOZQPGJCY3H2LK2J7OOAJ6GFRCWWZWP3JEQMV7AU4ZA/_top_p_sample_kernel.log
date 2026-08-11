@@ -1,0 +1,10 @@
+/usr/local/python3.11.0/lib/python3.11/site-packages/triton/language/standard.py:293:36: error: native scalar UB i64 load survived NPU-to-CCE lowering
+    return core.reduce(input, axis, _sum_combine, keep_dims=keep_dims)
+                                   ^
+/data/y00939135/test/testcase/49__topp_sampling/ci_topp_sampling.py:81:12: note: called from
+            0,
+           ^
+/usr/local/python3.11.0/lib/python3.11/site-packages/triton/language/standard.py:293:36: note: see current operation: %121 = "memref.load"(%120, %7) <{nontemporal = false}> : (memref<1xi64, 6>, index) -> i64
+    return core.reduce(input, axis, _sum_combine, keep_dims=keep_dims)
+                                   ^
+opentileas: error: '/data/y00939135/OpenTileAS/build/bin/tile-opt' exited with status 1

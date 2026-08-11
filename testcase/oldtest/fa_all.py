@@ -1355,7 +1355,7 @@ def _run_fa_case(idx, bs, num_head, head_dim, seqlen):
     max_seqlen_k = max(k_seq_list)
     data_root = os.environ.get(
         "FA_TEST_DATA_ROOT",
-        "/data/j00808997/opentile/fa_bwd/new",
+        "/data/y00939135/test/testcase/oldtest/new",
     )
     root_dir = os.path.join(
         os.path.abspath(data_root),
@@ -1550,7 +1550,7 @@ def _run_fa_case(idx, bs, num_head, head_dim, seqlen):
         (3, 8, 16, 32, 32),
         (4, 8, 16, 32, 64),
         (5, 8, 8, 64, 32),
-        # (6, 8, 4, 128, 118),
+        (6, 8, 4, 128, 118),
     ],
 )
 def test_fa_forward_backward(idx, bs, num_head, head_dim, seqlen):

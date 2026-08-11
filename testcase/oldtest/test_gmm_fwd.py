@@ -313,7 +313,7 @@ def test_group_gemm(g, mu, var, N, K, dtype):
 
     m_splits = gen_normal_int_list(g, mu, var)
     M = sum(m_splits)
-    print(" g:", g, " mu:", mu, " var:", var, " M:", M, " N:", N, " K:", K)
+    # print(" g:", g, " mu:", mu, " var:", var, " M:", M, " N:", N, " K:", K)
 
     # 构造数据
     A = torch.randn(M, K, device="cpu", dtype=dtype)

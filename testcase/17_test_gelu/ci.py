@@ -25,7 +25,8 @@ import triton
 import triton.language as tl
 
 from triton.compiler import ASTSource
-from triton.language.extra.cuda import libdevice
+# from triton.language.extra.cuda import libdevice
+from triton.language.extra.ascend import libdevice
 
 
 # The production source spells this as tl.math.tanh.  OpenTileConverter exposes

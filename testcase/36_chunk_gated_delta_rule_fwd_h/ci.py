@@ -32,10 +32,13 @@ os.environ.setdefault("TRITON_ALWAYS_COMPILE", "1")
 os.environ.setdefault("TRITON_F32_DEFAULT", "ieee")
 
 import pytest
+import pathlib
 
 torch = pytest.importorskip("torch")
 pytest.importorskip("torch_npu")
 
+GOLDEN_DIR = pathlib.Path("/data/y00939135/test/testcase/36_chunk_gated_delta_rule_fwd_h/golden")
+GOLDEN_DIR.mkdir(exist_ok=True)
 
 def _npu_available():
     try:
@@ -379,9 +382,32 @@ def _compare(name, actual, expected):
 
 @pytest.mark.parametrize("B,T,H,K,V", CASES)
 def test_chunk_gated_delta_rule_fwd_h_opentile(B, T, H, K, V):
+    golden_file = GOLDEN_DIR / f"golden_B{B}_T{T}_H{H}_K{K}_V{V}.pt"
     HV = H
-    k_cpu, w_cpu, u_cpu, g_cpu = _make_inputs(B, T, H, K, V)
-    expected_h, expected_v_new, expected_final_state = _cpu_reference(k_cpu, w_cpu, u_cpu, g_cpu)
+
+    # first run to save gold input and output
+    # k_cpu, w_cpu, u_cpu, g_cpu = _make_inputs(B, T, H, K, V)
+    # expected_h, expected_v_new, expected_final_state = _cpu_reference(k_cpu, w_cpu, u_cpu, g_cpu)
+    # torch.save(
+    #         {
+    #             "input": (k_cpu, w_cpu, u_cpu, g_cpu),
+    #             "expected": (expected_h, expected_v_new, expected_final_state),
+    #         },
+    #         golden_file,
+    #     )
+    # _stage(f"golden_generated -> {golden_file}")
+
+
+    # gold ready
+    if not golden_file.exists():
+        raise FileNotFoundError(
+            f"Golden file {golden_file} not found. "
+        )
+    data = torch.load(golden_file, map_location="cpu")
+    k_cpu, w_cpu, u_cpu, g_cpu = data["input"]
+    expected_h, expected_v_new, expected_final_state = data["expected"]
+    _stage(f"golden_loaded <- {golden_file}")
+
     _stage(
         f"input_and_golden_ready B={B} T={T} H={H} K={K} V={V} "
         f"dtype=bf16 chunk_size={BT} seed=42 use_g=1 save_new_value=1 "
