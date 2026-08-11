@@ -36,7 +36,7 @@ PR_NUM=""
 BRANCH_NAME=""
 TEST_NUM=""
 NO_COMPILE=false
-MAX_PARALLEL=10            # 固定并发数
+MAX_PARALLEL=20            # 固定并发数
 IS_PR_MODE=false          # 标记是否为 PR 模式
 
 for arg in "$@"; do
@@ -254,13 +254,21 @@ launch_test() {
     local test_file="$2"
     local log_file="${RESULT_DIR}/${id}.log"
     local status_file="${RESULT_DIR}/${id}.status"
+    local time_file="${RESULT_DIR}/${id}.time"
 
     (
         # ★ 关闭从父进程继承的文件锁，防止锁泄露
         exec 200>&- 2>/dev/null
+        START_TIME=$(date +%s)
         if run_test "$test_file" >> "$log_file" 2>&1; then
+            END_TIME=$(date +%s)
+            ELAPSED=$((END_TIME - START_TIME))
+            echo "$ELAPSED" > "$time_file"
             echo "0" > "$status_file"
         else
+            END_TIME=$(date +%s)
+            ELAPSED=$((END_TIME - START_TIME))
+            echo "$ELAPSED" > "$time_file"
             echo "1" > "$status_file"
         fi
     ) &
@@ -390,6 +398,32 @@ fi
 echo ""
 
 # ====================================================
+# 输出每个用例的耗时，并标记超时（> 5 分钟）
+# ====================================================
+echo "========== 每个用例耗时 =========="
+timeout_count=0
+timeout_list=()
+for id in "${task_ids[@]}"; do
+    time_file="${RESULT_DIR}/${id}.time"
+    if [ -f "$time_file" ]; then
+        elapsed=$(cat "$time_file")
+        minutes=$((elapsed / 60))
+        seconds=$((elapsed % 60))
+        echo -n "$id : ${minutes}m ${seconds}s"
+        if [ $elapsed -gt 300 ]; then
+            echo "  ⚠️ 超时（超过5分钟）"
+            timeout_list+=("$id")
+            ((timeout_count++))
+        else
+            echo ""
+        fi
+    else
+        echo "$id : 未记录耗时"
+    fi
+done
+echo ""
+
+# ====================================================
 # 汇总结果统计
 # ====================================================
 passed_dirs=()
@@ -451,6 +485,13 @@ if [ ${#skipped_dirs[@]} -gt 0 ]; then
     echo "跳过算子列表:"
     for d in "${skipped_dirs[@]}"; do
         echo "  - $d"
+    done
+fi
+if [ $timeout_count -gt 0 ]; then
+    echo "超时用例数: $timeout_count"
+    echo "超时用例列表:"
+    for t in "${timeout_list[@]}"; do
+        echo "  - $t"
     done
 fi
 echo "========================================"

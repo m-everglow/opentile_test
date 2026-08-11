@@ -133,7 +133,10 @@ def _get_bwd_axis_tile(BT: int, dim: int) -> int:
 
 
 def _get_bwd_tiles(BT: int, K: int, V: int) -> tuple[int, int]:
-    return _get_bwd_axis_tile(BT, K), _get_bwd_axis_tile(BT, V)
+    del BT  # Restore upstream source-native 16..64 tiling.
+    BK = min(max(triton.next_power_of_2(K), 16), 64)
+    BV = min(max(triton.next_power_of_2(V), 16), 64)
+    return BK, BV
 
 
 def _max_grid_axis_chunks(
@@ -406,7 +409,7 @@ def prepare_wy_repr_bwd_da_dot1_npu(
     p_out = tl.make_block_ptr(dA_mid + (bos * HV + i_h) * BT, (BT, T_local), (1, HV * BT), (0, i_t * BT), (BT, BT), (0, 1))
     b_A = tl.load(p_A, boundary_check=(0, 1))
     b_dA = tl.load(p_in, boundary_check=(0, 1)).to(tl.float32)
-    b_out = tl.dot(b_dA, b_A.to(tl.float32))
+    b_out = tl.dot(b_dA.to(b_A.dtype), b_A)
     tl.store(p_out, b_out.to(p_out.dtype.element_ty), boundary_check=(0, 1))
 
 
@@ -437,7 +440,7 @@ def prepare_wy_repr_bwd_da_dot2_npu(
     p_out = tl.make_block_ptr(dA_out + (bos * HV + i_h) * BT, (BT, T_local), (1, HV * BT), (0, i_t * BT), (BT, BT), (0, 1))
     b_A = tl.load(p_A, boundary_check=(0, 1))
     b_dA = tl.load(p_in, boundary_check=(0, 1)).to(tl.float32)
-    b_dA = tl.dot(b_A.to(tl.float32), b_dA)
+    b_dA = tl.dot(b_A, b_dA.to(b_A.dtype))
     o_t = i_t * BT + tl.arange(0, BT)
     m_t = o_t < T_local
     m_A = (o_t[:, None] > o_t[None, :]) & (m_t[:, None] & m_t)
@@ -489,7 +492,10 @@ def prepare_wy_repr_bwd_da_gate_npu(
             b_gate = exp2(b_diff)
             b_prod = b_dA * b_gate
             b_dA = tl.where(b_prod == b_prod, b_prod, 0.0)
-            tl.store(p_dA, b_dA.to(p_dA.dtype.element_ty), boundary_check=(0, 1))
+            # Upstream quantizes transformed dA to the source dtype before
+            # finalize_k/finalize_dg consume it. Keep FP32 storage, not FP32 math.
+            b_dA = b_dA.to(g.dtype.element_ty).to(tl.float32)
+            tl.store(p_dA, b_dA, boundary_check=(0, 1))
 
 
 @triton.jit(do_not_specialize=["T"])
@@ -528,11 +534,14 @@ def prepare_wy_repr_bwd_finalize_k_npu(
             k + (bos * H + i_h // (HV // H)) * K, (T_local, K), (H * K, 1), (i_t * BT, i_k * BK), (BT, BK), (1, 0),
         )
         p_dk = tl.make_block_ptr(dk + (bos * HV + i_h) * K, (T_local, K), (HV * K, 1), (i_t * BT, i_k * BK), (BT, BK), (1, 0))
-        b_k = tl.load(p_k, boundary_check=(0, 1)).to(tl.float32)
+        b_k = tl.load(p_k, boundary_check=(0, 1))
+        b_dA_dot = b_dA.to(b_k.dtype)
         b_kb = b_k * b_b[:, None]
-        b_dkb = tl.dot(b_dA, b_k)
+        b_dkb = tl.dot(b_dA_dot, b_k)
         b_db += tl.sum(b_dkb * b_k, 1)
-        b_dk = b_dkb * b_b[:, None] + tl.trans(tl.dot(tl.trans(b_kb), b_dA))
+        b_dk = b_dkb * b_b[:, None] + tl.trans(
+            tl.dot(tl.trans(b_kb).to(b_dA_dot.dtype), b_dA_dot)
+        )
         b_dk += tl.load(p_dk, boundary_check=(0, 1)).to(tl.float32)
         tl.store(p_dk, b_dk.to(p_dk.dtype.element_ty), boundary_check=(0, 1))
 
