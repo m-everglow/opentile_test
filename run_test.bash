@@ -10,7 +10,7 @@
 #   - PR 模式结束后自动清除 build 目录，防止污染后续 main 测试。
 
 SECONDS=0
-export ASCEND_RT_VISIBLE_DEVICES=4
+export ASCEND_RT_VISIBLE_DEVICES=3
 echo "========== 脚本开始 =========="
 
 # ---- 获取脚本所在目录（绝对路径） ----
@@ -223,6 +223,37 @@ run_test() {
         fi
         exit_code=$?
         if [ $exit_code -eq 0 ]; then
+	    rm -f "$tmp_out"
+	    return 0
+        else
+            retry_count=$((retry_count + 1))
+            if [ $retry_count -lt $max_retries ]; then
+                echo "⚠️ 第 $retry_count 次运行失败，重试中... ($file)" >&2
+            fi
+        fi
+    done
+
+    # 所有重试都失败，将日志输出到 stderr 以便上层捕获
+    echo "❌ $file 运行失败 (退出码 $exit_code)，已重试 $max_retries 次" >&2
+    cat "$tmp_out" >&2
+    rm -f "$tmp_out"
+    return 1
+}
+
+# test vffusion max_parallel
+run_test_max_parallel() {
+    local file="$1"
+    local max_retries=5
+    local retry_count=0
+    local tmp_out=$(mktemp)
+    local exit_code=0
+
+    echo "############test ($file) max_parallel#############"
+    while [ $retry_count -lt $max_retries ]; do
+        > "$tmp_out"
+        TRITON_ALWAYS_COMPILE=1 FUSION_MODE=max_parallel python -m pytest -v --tb=short "$file" > "$tmp_out" 2>&1
+        exit_code=$?
+        if [ $exit_code -eq 0 ]; then
             rm -f "$tmp_out"
             return 0
         else
@@ -239,7 +270,6 @@ run_test() {
     rm -f "$tmp_out"
     return 1
 }
-
 # ====================================================
 # 并发执行测试框架
 # ====================================================
@@ -271,6 +301,19 @@ launch_test() {
             echo "$ELAPSED" > "$time_file"
             echo "1" > "$status_file"
         fi
+        if [[ "$test_file" == *"46_test_rmsnorm/ci.py" ]]; then
+            if run_test_max_parallel "$test_file" >> "$log_file" 2>&1; then
+                END_TIME=$(date +%s)
+                ELAPSED=$((END_TIME - START_TIME))
+                echo "$ELAPSED" > "$time_file"
+                echo "0" > "$status_file"
+            else
+                END_TIME=$(date +%s)
+                ELAPSED=$((END_TIME - START_TIME))
+                echo "$ELAPSED" > "$time_file"
+                echo "1" > "$status_file"
+            fi
+	fi
     ) &
 }
 

@@ -21,6 +21,7 @@ def rmsnorm_kernel(x, y, weight, n_rows, n_cols, eps, BLOCK_N: tl.constexpr, BLO
             cols = start + tl.arange(0, BLOCK_N)
             mask = row_mask[:, None] & (cols[None, :] < n_cols)
             values = tl.load(x + rows[:, None] * n_cols + cols[None, :], mask=mask, other=0.0).to(tl.float32)
+            # reinterprete_cast offsets[task * BLOCK_M, start] shapes[2048, 2] strides[n_cols, 1]
             square_sum += tl.sum(values * values, axis=1)
         rrms = tl.rsqrt(square_sum / n_cols + eps)
         for start in range(0, n_cols, BLOCK_N):

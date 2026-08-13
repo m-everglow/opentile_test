@@ -1,10 +1,66 @@
 [FP8_FA_STAGE] elapsed=0.000s pytest_import_begin
 [FP8_FA_STAGE] elapsed=0.001s pytest_import_done
 [FP8_FA_STAGE] elapsed=0.001s torch_import_begin
-[FP8_FA_STAGE] elapsed=3.015s torch_import_done version=2.12.0+cu130
-[FP8_FA_STAGE] elapsed=3.016s torch_npu_import_begin
-[FP8_FA_STAGE] elapsed=3.016s torch_npu_import_done version=2.12.0
-[FP8_FA_STAGE] elapsed=3.016s device_config logical_device=0 ASCEND_RT_VISIBLE_DEVICES=4
-[FP8_FA_STAGE] elapsed=3.016s npu_is_available_begin
-[FP8_FA_STAGE] elapsed=3.016s npu_is_available_done value=1
-[FP8_FA_STAGE] elapsed=3.016s set_device_begin logical_device=0
+[FP8_FA_STAGE] elapsed=4.372s torch_import_done version=2.7.1+cpu
+[FP8_FA_STAGE] elapsed=4.373s torch_npu_import_begin
+[FP8_FA_STAGE] elapsed=4.373s torch_npu_import_done version=2.7.1.post3.dev20260129
+[FP8_FA_STAGE] elapsed=4.373s device_config logical_device=0 ASCEND_RT_VISIBLE_DEVICES=3
+[FP8_FA_STAGE] elapsed=4.373s npu_is_available_begin
+[FP8_FA_STAGE] elapsed=4.374s npu_is_available_done value=1
+[FP8_FA_STAGE] elapsed=4.374s set_device_begin logical_device=0
+[FP8_FA_STAGE] elapsed=33.280s set_device_done logical_device=0
+[FP8_FA_STAGE] elapsed=33.280s module_import_done
+[FP8_FA_STAGE] elapsed=33.287s test_begin ci_sha256=c71d2f933719ddb905dbde83ee2b48381fc1aeb78233a84f4c786ad8089a7206 contract_sha256=7682230827455db59f8a06d7a1e64ff58c3ef953d1e0e1760be15246927b4c2d kernel_sha256=bca89d0df1322c3af90262403d6bac03d86dc114bb05c0d15527f4e560cc9e9c upstream_kernel_sha256=cdcce1fc9a7bcb875afaed4973a3c00a8623dd3e876280354592ca6afb5d7c70 exact_source=0 compat_no_reduce_nan_propagation=1 OPENTILE_TEST_DEVICE=0 shape=128x8x1024x64 base_dtype=f32 kernel_dtype=e4m3fn causal=0 BM=64 BN=128 seed=20
+[FP8_FA_STAGE] elapsed=33.287s frontend_preflight_import_begin
+[FP8_FA_STAGE] elapsed=33.290s frontend_preflight_import_done
+[FP8_FA_PROVENANCE] python=/usr/bin/python python_version=3.11.0 triton_version=3.6.0
+[FP8_FA_PROVENANCE] triton_file=/usr/local/python3.11.0/lib/python3.11/site-packages/triton/__init__.py standard_file=/usr/local/python3.11.0/lib/python3.11/site-packages/triton/language/standard.py ascend_compiler_file=/usr/local/python3.11.0/lib/python3.11/site-packages/triton/backends/opentile/targets/ascend/compiler.py
+[FP8_FA_PROVENANCE] converter_root=NA converter_head=NA opentile_ir_root=NA opentile_ir_head=NA
+[FP8_FA_PROVENANCE] target=GPUTarget(backend='opentile_ascend', arch='Ascend950PR_9579', warp_size=32) backend_class=triton.backends.opentile.driver.OpenTileDriver opentileas_path=/home/y00943959/OpenTileAS/build/bin/opentileas opentileas_root=/home/y00943959/OpenTileAS opentileas_head=0a8f49c4d849d2eccadc97ff218154cd4099be38 opentileas_sha256=5cedda3aa4a739bd9b6073aea3638376ea5bd9c80515e511f4aa2b1af6107f4d
+[FP8_FA_CAPABILITY] supported_fp8_dtypes=('fp8e4nv', 'fp8e5') tl_max_signature=(input, axis=None, return_indices=False, return_indices_tie_break_left=True, keep_dims=False) mlir_diagnostics=operations,stacktraces reproducer_prefix=/tmp/fp8_fa_repro_594
+[FP8_FA_STAGE] elapsed=33.492s frontend_preflight_pass
+[FP8_FA_SOURCE_CONTRACT] kernel_sha256=bca89d0df1322c3af90262403d6bac03d86dc114bb05c0d15527f4e560cc9e9c reduce_propagate_nan_true_count=0 compat_todo_count=2 exact_upstream_source=0 compat_no_reduce_nan_propagation=1
+[FP8_FA_STAGE] elapsed=33.492s production_source_import_begin
+[FP8_FA_STAGE] elapsed=33.497s production_source_import_done
+[FP8_FA_STAGE] elapsed=33.497s opentile_launch_compat_installed filtered_options=multibuffer,enable_auto_bind_sub_block,sync_solver,limit_auto_multi_buffer_of_local_buffer,set_workspace_multibuffer
+[FP8_FA_STAGE] elapsed=33.497s diagnostic_hooks_installed
+[FP8_FA_STAGE] elapsed=33.497s original_test_op_begin
+[FP8_FA_STAGE] elapsed=33.700s quantize_q_begin shape=(128, 8, 1024, 64) dtype=torch.float32 device=npu:0
+[FP8_FA_STAGE] elapsed=33.723s quantize_q_synchronize_begin
+[FP8_FA_STAGE] elapsed=33.723s quantize_q_done dscale_shape=(128, 8, 16, 1) quantized_dtype=torch.float8_e4m3fn
+[FP8_FA_STAGE] elapsed=33.723s quantize_k_begin shape=(128, 8, 1024, 64) dtype=torch.float32 device=npu:0
+[FP8_FA_STAGE] elapsed=33.724s quantize_k_synchronize_begin
+[FP8_FA_STAGE] elapsed=33.725s quantize_k_done dscale_shape=(128, 8, 8, 1) quantized_dtype=torch.float8_e4m3fn
+[FP8_FA_STAGE] elapsed=33.725s quantize_v_begin shape=(128, 8, 1024, 64) dtype=torch.float32 device=npu:0
+[FP8_FA_STAGE] elapsed=33.726s quantize_v_synchronize_begin
+[FP8_FA_STAGE] elapsed=33.726s quantize_v_done dscale_shape=(128, 8, 8, 1) quantized_dtype=torch.float8_e4m3fn
+[FP8_FA_STAGE] elapsed=33.726s production_attention_begin kernel=_attn_fwd_fp8
+[FP8_FA_STAGE] elapsed=33.728s opentile_launch_options removed=multibuffer,enable_auto_bind_sub_block,sync_solver,limit_auto_multi_buffer_of_local_buffer,set_workspace_multibuffer kept_num_stages=2
+[FP8_FA_STAGE] elapsed=35.764s production_attention_returned
+[FP8_FA_STAGE] elapsed=35.764s production_attention_synchronize_begin
+[FP8_FA_STAGE] elapsed=35.764s production_attention_done shape=(128, 8, 1024, 64) dtype=torch.float32
+[FP8_FA_STAGE] elapsed=35.764s golden_tforward_npu_begin
+[FP8_FA_STAGE] elapsed=55.959s golden_tforward_npu_returned
+[FP8_FA_STAGE] elapsed=55.959s golden_tforward_npu_synchronize_begin
+[FP8_FA_STAGE] elapsed=55.960s golden_tforward_npu_done shape=(128, 8, 1, 1024, 64) dtype=torch.float32
+[FP8_FA_STAGE] elapsed=58.177s original_test_op_done
+[FP8_FA_STAGE] elapsed=58.193s final_synchronize_begin
+[FP8_FA_STAGE] elapsed=58.198s final_synchronize_done
+[FP8_FA_NATIVE_STDERR] path=/data/y00939135/test/testcase/39_FA_FP8/fp8_fa_native_production.log bytes=148 sha256=f0efa56bd7ed65558b5a7b32c4842c3812a2a92ac5a97c0a81ba800f2e89a92f
+[FP8_FA_REPRODUCERS] prefix=/tmp/fp8_fa_repro_594 count=2
+[FP8_FA_REPRODUCER] name=fp8_fa_repro_594.make_ttir.repro.mlir bytes=18836 sha256=8b37c6e4a4e93373d2e651495febeff46f99c88379ff86326a9b89dfee8b10da
+[FP8_FA_REPRODUCER] name=fp8_fa_repro_594.make_opentile.repro.mlir bytes=9914 sha256=60980fc999e2abadcc58503d73d5c13ee68fe593dc8964089792f4cabd7cb888
+[FP8_FA_REPRODUCER_COUNTS] ftof=0 fp8e4=0 fp8e5=0
+[FP8_FA_REPRODUCER_MATCH] line=2 text=  tt.func public @_attn_fwd_fp8(%arg0: !tt.ptr<f8E4M3FN> {tt.divisibility = 16 : i32}, %arg1: !tt.ptr<f8E4M3FN> {tt.divisibility = 16 : i32}, %arg2: !tt.ptr<f8E4M3FN> {tt.divisibility = 16 : i32}, %arg3: !tt.ptr<f32> {tt.divisibility = 16 : i32}, %arg4: !tt.ptr<f32> {tt.divisibility = 16 : i32}, %arg5: !tt.ptr<i32> {tt.divisibility = 16 : i32}, %arg6: !tt.ptr<f32> {tt.divisibility = 16 : i32}, %arg7: !tt.ptr<f32> {tt.divisibility = 16 : i32}, %arg8: !tt.ptr<f32> {tt.divisibility = 16 : i32}) attributes {noinline = false} { 
+[FP8_FA_REPRODUCER_MATCH] line=50 text=      %23 = tt.addptr %arg0, %16 : !tt.ptr<f8E4M3FN>, i64 
+[FP8_FA_REPRODUCER_MATCH] line=53 text=      %26 = tt.addptr %arg2, %16 : !tt.ptr<f8E4M3FN>, i64 
+[FP8_FA_REPRODUCER_MATCH] line=54 text=      %27 = tt.addptr %arg1, %16 : !tt.ptr<f8E4M3FN>, i64 
+[FP8_FA_REPRODUCER_MATCH] line=63 text=      %36 = tt.splat %23 : !tt.ptr<f8E4M3FN> -> tensor<64x64x!tt.ptr<f8E4M3FN>> 
+[FP8_FA_REPRODUCER_MATCH] line=70 text=      %43 = tt.addptr %36, %42 : tensor<64x64x!tt.ptr<f8E4M3FN>>, tensor<64x64xi64> 
+[FP8_FA_REPRODUCER_MATCH] line=71 text=      %44 = tt.load %43 : tensor<64x64x!tt.ptr<f8E4M3FN>> 
+[FP8_FA_REPRODUCER_MATCH] line=75 text=      %48 = tt.splat %27 : !tt.ptr<f8E4M3FN> -> tensor<128x64x!tt.ptr<f8E4M3FN>> 
+[FP8_FA_REPRODUCER_MATCH] line=77 text=      %50 = tt.splat %26 : !tt.ptr<f8E4M3FN> -> tensor<128x64x!tt.ptr<f8E4M3FN>> 
+[FP8_FA_REPRODUCER_MATCH] line=85 text=        %69 = tt.addptr %48, %68 : tensor<128x64x!tt.ptr<f8E4M3FN>>, tensor<128x64xi64> 
+[FP8_FA_REPRODUCER_MATCH] line=86 text=        %70 = tt.load %69 : tensor<128x64x!tt.ptr<f8E4M3FN>> 
+[FP8_FA_REPRODUCER_MATCH] line=87 text=        %71 = tt.trans %70 {order = array<i32: 1, 0>} : tensor<128x64xf8E4M3FN> -> tensor<64x128xf8E4M3FN> 
+[FP8_FA_STAGE] elapsed=58.229s case_pass
