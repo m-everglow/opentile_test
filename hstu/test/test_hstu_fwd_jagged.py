@@ -6,6 +6,8 @@ import pytest
 import sysconfig
 import os
 import sys
+import time
+import traceback
 import torch.nn.functional as F
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(current_dir))
@@ -169,6 +171,69 @@ def set_seed(seed: int = 42):
     np.random.seed(seed)
     random.seed(seed)
 
+
+# ===== 偶现精度问题排查辅助 =====
+DEBUG_DUMP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                              "_debug_dumps")
+os.makedirs(DEBUG_DUMP_DIR, exist_ok=True)
+
+
+def _analyze_mare_position(golden, actual, top_k=5):
+    """分析 MARE 最大值指向的位置（batch/head/dim/seq），用于判断错误是否稳定。
+    返回 [(value, idx_tuple, pct_err), ...]"""
+    g = golden.to(torch.float32)
+    a = actual.to(torch.float32)
+    flat_err = torch.abs(a - g) / (torch.abs(g) + 1e-7)
+    flat_err = flat_err.flatten()
+    # 过滤掉 golden=0 的极端位置（MARE 在 0 处分母是 MIN_ERR，本来就大）
+    vals, idxs = torch.topk(flat_err, k=min(top_k, flat_err.numel()))
+    B, H, D = golden.shape[0], golden.shape[2], golden.shape[3]
+    # shape: [num_tokens, num_heads_q, linear_dim]
+    out = []
+    for v, i in zip(vals.tolist(), idxs.tolist()):
+        tok = i // (H * D)
+        rem = i % (H * D)
+        head = rem // D
+        dim = rem % D
+        out.append((v, (tok, head, dim)))
+    return out
+
+
+def _bucket_error_counts(golden, actual, buckets=(0.0001, 0.001, 0.01, 0.1, 0.5, 1.0, 10.0)):
+    """把误差分桶统计：<0.01%, <0.1%, <1%, <10%, <50%, <100%, >100%。
+    帮助判断是少数极端错还是普遍偏。"""
+    g = golden.to(torch.float32)
+    a = actual.to(torch.float32)
+    rel_err = (torch.abs(a - g) / (torch.abs(g) + 1e-7)).flatten()
+    out = {}
+    for thr in buckets:
+        out[f"<{thr}"] = int((rel_err < thr).sum().item())
+    out["nan"] = int(torch.isnan(actual).sum().item())
+    out["inf"] = int(torch.isinf(actual).sum().item())
+    out["total"] = int(rel_err.numel())
+    return out
+
+
+def _dump_failed_iter(case_tag, q, k, v, seq_offset_q, seq_offset_k,
+                     golden_output, sim_output, triton_output, mare_positions):
+    """把失败 iter 的完整输入输出 + 错误位置 dump 到磁盘。"""
+    payload = {
+        "case_tag": case_tag,
+        "q": q.detach().cpu(),
+        "k": k.detach().cpu(),
+        "v": v.detach().cpu(),
+        "seq_offset_q": seq_offset_q.detach().cpu(),
+        "seq_offset_k": seq_offset_k.detach().cpu(),
+        "golden_output": golden_output.detach().cpu(),
+        "sim_output": sim_output.detach().cpu(),
+        "triton_output": triton_output.detach().cpu(),
+        "mare_positions": mare_positions,
+    }
+    fname = f"failed_{case_tag}_{int(time.time()*1000)}.pt"
+    fpath = os.path.join(DEBUG_DUMP_DIR, fname)
+    torch.save(payload, fpath)
+    return fpath
+
 def get_or_generate_data(
     batch_size, num_heads_q, num_heads_k, seq_len_q, seq_len_k, 
     attention_dim, linear_dim, device, dtype
@@ -320,7 +385,59 @@ def test_triton_matches_golden(
         silu_scale=1.0 / seq_len_q,
     ).view([-1, num_heads_q, linear_dim]).to(device)
 
+    # ===== 排查 1: Triton 算子 iter-to-iter 一致性 =====
+    # 同一份输入跑两次，看 Triton 内部是否一致——不一致就是 triton 内部 race
+    triton_output_2 = triton_hstu_attention_fwd(
+        q=q, k=k, v=v,
+        max_seq_len_q=seq_len_q, max_seq_len_k=seq_len_k,
+        seq_offsets_q=seq_offset_q, seq_offsets_k=seq_offset_k,
+        num_context=None, num_target=None,
+        alpha=alpha, silu_scale=1.0 / seq_len_q,
+    ).view([-1, num_heads_q, linear_dim]).to(device)
+    triton_diff = (triton_output.float() - triton_output_2.float()).abs().max().item()
+    print(f"[DEBUG] triton-output self-diff (max abs): {triton_diff:.6e}")
+
+    # ===== 排查 2: NaN/Inf 检测 =====
+    n_nan = int(torch.isnan(triton_output).sum().item())
+    n_inf = int(torch.isinf(triton_output).sum().item())
+    print(f"[DEBUG] triton nan count: {n_nan}, inf count: {n_inf}")
+
     if golden_output is None:
         return
 
-    assert compare_cv(golden_output.npu(), sim_output.npu(), triton_output.npu())
+    try:
+        assert compare_cv(golden_output.npu(), sim_output.npu(), triton_output.npu())
+    except AssertionError as e:
+        case_tag = (f"{dtype_str}-{batch_size}-{num_heads_q}-{num_heads_k}"
+                    f"-{seq_len_q}-{seq_len_k}-{attention_dim}-{linear_dim}")
+        print(f"\n{'='*60}")
+        print(f"[FAIL] case={case_tag}")
+        print(f"[FAIL] triton self-diff (2x same input): {triton_diff:.6e}")
+        print(f"[FAIL] nan={n_nan}, inf={n_inf}")
+
+        # ===== 排查 3: MARE 峰值位置 =====
+        mare_pos = _analyze_mare_position(golden_output, triton_output, top_k=5)
+        print(f"[FAIL] top-5 MARE positions (tok, head, dim) -> rel_err:")
+        num_tokens_q = int(seq_offset_q[-1].item())
+        for rel_err, pos in mare_pos:
+            tok, head, dim = pos
+            print(f"        {pos} -> {rel_err:.6f}")
+            if tok < num_tokens_q:
+                batch_idx = tok // seq_len_q
+                local_pos = tok % seq_len_q
+                batch_offset = int(seq_offset_q[batch_idx].item())
+                print(f"          (batch={batch_idx}, batch_offset={batch_offset}, local_seq_pos={local_pos}, head={head}, dim={dim})")
+            else:
+                print(f"          (out of range: tok={tok})")
+
+        # ===== 排查 4: 误差分桶统计 =====
+        bucket = _bucket_error_counts(golden_output, triton_output)
+        print(f"[FAIL] error bucket distribution: {bucket}")
+
+        # ===== 排查 5: dump 数据用于离线分析 =====
+        fpath = _dump_failed_iter(
+            case_tag, q, k, v, seq_offset_q, seq_offset_k,
+            golden_output, sim_output, triton_output, mare_pos)
+        print(f"[FAIL] dumped to: {fpath}")
+        print(f"{'='*60}\n")
+        raise
