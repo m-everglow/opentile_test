@@ -115,10 +115,10 @@ def main(iter_count=100):
                 diff_map = (out_f32 - ref.float()).abs().flatten()
                 top_vals, top_idxs = torch.topk(diff_map, k=min(5, diff_map.numel()))
                 positions = []
-                for v, idx in zip(top_vals.tolist(), top_idxs.tolist()):
+                for abs_d, idx in zip(top_vals.tolist(), top_idxs.tolist()):
                     tok, b, sp, h, d = decode_index(idx)
                     positions.append({
-                        "flat_idx": idx, "abs_diff": v,
+                        "flat_idx": idx, "abs_diff": abs_d,
                         "token": tok, "batch": b, "seq_pos": sp,
                         "head": h, "dim": d,
                     })
