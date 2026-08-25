@@ -66,6 +66,23 @@ def main(iter_count=100):
     nan_total = 0
     inf_total = 0
     unique_outputs = set()
+    # 记录每个失败 iter 的 top-差异位置
+    failed_iter_positions = []
+    # shape: [num_tokens_q, num_heads_q, linear_dim]
+    n_tokens_q = B * Sq
+    Hq_actual = Hq
+    D_actual = Ld
+
+    def decode_index(flat_idx):
+        """把 flat index 解码成 (token_idx, batch_idx, seq_pos, head, dim)"""
+        head_dim = Hq_actual * D_actual
+        tok = flat_idx // head_dim
+        rem = flat_idx % head_dim
+        head = rem // D_actual
+        dim = rem % D_actual
+        batch_idx = tok // Sq
+        seq_pos = tok % Sq
+        return tok, batch_idx, seq_pos, head, dim
 
     for i in range(iter_count):
         out = triton_hstu_attention_fwd(
@@ -90,9 +107,26 @@ def main(iter_count=100):
             diff = (out_f32 - ref.float()).abs().max().item()
             print(f"[iter {i:3d}] max_diff={diff:.6e}  nan={n_nan}  inf={n_inf}")
             diffs.append(diff)
-            # 用 sha1 区分不同的输出（避免存大张量）
             sample = out_f32.flatten()[:8].cpu().tolist()
             unique_outputs.add(tuple(round(x, 4) for x in sample))
+
+            # 失败时分析 top-5 差异位置
+            if diff > 0:
+                diff_map = (out_f32 - ref.float()).abs().flatten()
+                top_vals, top_idxs = torch.topk(diff_map, k=min(5, diff_map.numel()))
+                positions = []
+                for v, idx in zip(top_vals.tolist(), top_idxs.tolist()):
+                    tok, b, sp, h, d = decode_index(idx)
+                    positions.append({
+                        "flat_idx": idx, "abs_diff": v,
+                        "token": tok, "batch": b, "seq_pos": sp,
+                        "head": h, "dim": d,
+                    })
+                failed_iter_positions.append((i, diff, positions))
+                print(f"           top-5 diff positions:")
+                for p in positions:
+                    print(f"             batch={p['batch']:4d} seq_pos={p['seq_pos']:2d} "
+                          f"head={p['head']} dim={p['dim']:3d}  abs_diff={p['abs_diff']:.4f}")
 
     print("\n" + "=" * 60)
     print(f"[SUMMARY] total iters: {iter_count}")
@@ -112,6 +146,38 @@ def main(iter_count=100):
         print("[SUMMARY]      - multi-stage pipeline (num_stages)")
         print("[SUMMARY]      - UB 未清零")
         print("[SUMMARY]      - Cube/Vector 跨核同步")
+
+        # ===== 跨失败 iter 位置汇总 =====
+        if failed_iter_positions:
+            # 收集每个失败 iter 的 top-1 位置
+            top1_positions = []
+            for (i, diff, positions) in failed_iter_positions:
+                p = positions[0]
+                top1_positions.append(
+                    (i, diff, p["batch"], p["seq_pos"], p["head"], p["dim"]))
+            print(f"\n[SUMMARY] failed iters with top-1 diff position:")
+            for entry in top1_positions:
+                print(f"           iter {entry[0]:3d}: batch={entry[2]:4d} "
+                      f"seq_pos={entry[3]:2d} head={entry[4]} dim={entry[5]:3d}  "
+                      f"abs_diff={entry[1]:.4f}")
+            # 统计 top-1 位置是否稳定
+            from collections import Counter
+            pos_counter = Counter(
+                (e[2], e[3], e[4], e[5]) for e in top1_positions)
+            print(f"\n[SUMMARY] top-1 position frequency:")
+            for pos, cnt in pos_counter.most_common():
+                print(f"           {pos}  appears {cnt}/{len(top1_positions)} times")
+            if pos_counter.most_common(1)[0][1] == len(top1_positions):
+                print("[SUMMARY] 🎯 All failures point to the SAME position!")
+                print("[SUMMARY]    → 强结构性问题：")
+                print("[SUMMARY]      - 该位置存在同步缺失")
+                print("[SUMMARY]      - 该 iter 边界条件未正确处理")
+            elif pos_counter.most_common(1)[0][1] >= len(top1_positions) // 2:
+                print("[SUMMARY] 🎯 Most failures cluster on a few positions!")
+                print("[SUMMARY]    → 半结构性问题：少数位置反复出问题")
+            else:
+                print("[SUMMARY] 🔀 Failures spread across many positions")
+                print("[SUMMARY]    → 软性 race：调度时序窗口不稳定")
     print("=" * 60)
 
 
