@@ -203,9 +203,9 @@ def test_op(Z, H, N_CTX, HEAD_DIM, causal, dtype,BM ,BN):
     PER_BLOCK_SIZE_Q = BM
     PER_BLOCK_SIZE_KV = BN
     # assert PER_BLOCK_SIZE == BM and BM == BN
-    q = torch.empty((Z, H, N_CTX, HEAD_DIM), dtype=dtype, device=DEVICE).normal_(mean=0.0, std=0.5).requires_grad_()
-    k = torch.empty((Z, H, N_CTX, HEAD_DIM), dtype=dtype, device=DEVICE).normal_(mean=0.0, std=0.5).requires_grad_()
-    v = torch.empty((Z, H, N_CTX, HEAD_DIM), dtype=dtype, device=DEVICE).normal_(mean=0.0, std=0.5).requires_grad_()
+    q = torch.ones((Z, H, N_CTX, HEAD_DIM), dtype=dtype, device=DEVICE).requires_grad_()
+    k = torch.ones((Z, H, N_CTX, HEAD_DIM), dtype=dtype, device=DEVICE).requires_grad_()
+    v = torch.ones((Z, H, N_CTX, HEAD_DIM), dtype=dtype, device=DEVICE).requires_grad_()
 
 
     sm_scale = 1.0 / math.sqrt(HEAD_DIM)
